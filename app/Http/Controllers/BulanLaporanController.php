@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tambahlaporan;
+use App\Models\Bulanlaporan;
 use Illuminate\Http\Request;
-use View;
+use Illuminate\Support\Facades\Auth;
 
-class TambahlaporanController extends Controller
+class BulanLaporanController extends Controller
 {
   /**
    * Display a listing of the resource.
@@ -15,21 +15,18 @@ class TambahlaporanController extends Controller
    */
   public function index()
   {
+    // $datas = Tambahlaporan::all();
 
-    // // $keyword = $request->keyword;
-    // $data = Penerbit::where('nama_penerbit', 'LIKE', '%' . $keyword . '%')
-    //     ->orWhere('kota', 'LIKE', '%' . $keyword . '%')
-    //     ->paginate(5);
-    // $data->withPath('penerbit');
-    $datas = Tambahlaporan::all();
 
-    return view('beranda.tambahlaporan.index', compact(
+    $bulanlaporan = new Bulanlaporan();
+    $datas = $bulanlaporan->getBulanlaporan(Auth::user()->id_satker)->get();
+
+    // dd($datas);
+    return view('beranda.bulanlaporan.index', compact(
       'datas'
-
-
-
     ));
   }
+
 
   /**
    * Show the form for creating a new resource.
@@ -38,8 +35,8 @@ class TambahlaporanController extends Controller
    */
   public function create()
   {
-    $model = new Tambahlaporan;
-    return view('beranda.tambahlaporan.create', compact(
+    $model = new Bulanlaporan;
+    return view('beranda.bulanlaporan.create', compact(
       'model'
     ));
   }
@@ -52,10 +49,14 @@ class TambahlaporanController extends Controller
    */
   public function store(Request $request)
   {
-    $model = new Tambahlaporan;
-    $model->bulan = $request->bulan;
+    $model = new Bulanlaporan;
+    $model->nama_bulan = $request->nama_bulan;
+    $model->bulan_angka = $request->bulan_angka;
     $model->tahun = $request->tahun;
+    $id_satker = Auth::user()->id_satker;
+    $model->id_satker = $id_satker;
     $model->save();
+
 
     return redirect('bulanlaporan');
   }
@@ -63,10 +64,10 @@ class TambahlaporanController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \App\Models\tambahlaporan  $tambahlaporan
+   * @param  \App\Models\Bulanlaporan  $bulanlaporan
    * @return \Illuminate\Http\Response
    */
-  public function show(tambahlaporan $tambahlaporan)
+  public function show(Bulanlaporan $bulanlaporan)
   {
     //
   }
@@ -74,30 +75,27 @@ class TambahlaporanController extends Controller
   /**
    * Show the form for editing the specified resource.
    *
-   * @param  \App\Models\tambahlaporan  $tambahlaporan
+   * @param  \App\Models\Bulanlaporan  $bulanlaporan
    * @return \Illuminate\Http\Response
    */
   public function edit($id)
   {
-
-    $model = Tambahlaporan::find($id);
+    $model = Bulanlaporan::find($id);
     return view('beranda.tambahlaporan.edit', compact(
       'model'
     ));
   }
 
-
   /**
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @param  \App\Models\tambahlaporan  $tambahlaporan
+   * @param  \App\Models\Bulanlaporan  $bulanlaporan
    * @return \Illuminate\Http\Response
    */
   public function update(Request $request, $id)
   {
-
-    $model = Tambahlaporan::find($id);
+    $model = Bulanlaporan::find($id);
     $model->bulan = $request->bulan;
     $model->tahun = $request->tahun;
     $model->save();
@@ -108,19 +106,18 @@ class TambahlaporanController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \App\Models\tambahlaporan  $tambahlaporan
+   * @param  \App\Models\Bulanlaporan  $bulanlaporan
    * @return \Illuminate\Http\Response
    */
   public function destroy($id)
   {
-    $model = Tambahlaporan::find($id);
-    $model->delete($id);
-    return redirect('bulanlaporan');
-  }
 
-  public function getForm($id)
-  {
-    $html =  View::make('form.lipa' . $id)->render();
-    return response()->json($html);
+
+    if (Bulanlaporan::destroy($id)) {
+      session()->flash('success', 'Data berhasil dihapus');
+    } else {
+      session()->flash('failed', 'data gagal dihapus');
+    }
+    return redirect('bulanlaporan');
   }
 }

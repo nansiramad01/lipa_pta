@@ -23,12 +23,12 @@ use App\Http\Controllers\TambahlaporanController;
 */
 
 Route::get('/', function () {
-    return view('beranda.index');
+  return view('beranda.index');
 })->middleware('auth');
 
 
 Route::get('profil', function () {
-    return view('beranda.profil');
+  return view('beranda.profil');
 })->middleware('auth');
 
 
@@ -44,7 +44,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::resource('penerbit', penerbitController::class);
 Route::resource('satuankerja', SatuankerjaController::class);
 
-Route::get('/kirim-laporan', [TambahlaporanController::class, 'index'])->middleware('auth');
+
 
 Route::resource('LIPA 1', Lipa1Controlller::class);
 
@@ -59,5 +59,5 @@ Route::get('/tambahusers', [InputusersController::class, 'index'])->middleware('
 Route::post('/tambahusers', [InputusersController::class, 'store'])->middleware('auth');
 Route::get('/delete-bulan/{id}', [BulanLaporanController::class, 'destroy'])->middleware('auth');
 
-
-Route::get('form/{id}', [TambahlaporanController::class, 'getForm']);
+Route::get('/kirim-laporan', [TambahlaporanController::class, 'index'])->middleware('auth')->name('laporan.create');
+Route::get('form/{id?}', [TambahlaporanController::class, 'getForm'])->name('laporan.form');

@@ -22,11 +22,8 @@
       aria-expanded="false">Dropdown</button>
 
     <div class="dropdown-menu">
-      <button class="dropdown-item" onclick="getForm(1)">Action</button>
-      <a class="dropdown-item" href="#">Another action</a>
-      <a class="dropdown-item" href="#">Something else here</a>
-      <div role="separator" class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
+      @for ($i = 1; $i < 27; $i++) <button class="dropdown-item" onclick="getForm({{$i}})">LIPA {{$i}}</button>
+        @endfor
     </div>
     {{--
   </div> --}}
@@ -64,6 +61,9 @@
 
   </tbody>
 </table>
+<div id="formLipa" class="">
+  <p>Form Disini</p>
+</div>
 
 {{-- {{ $data->links() }} --}}
 
@@ -71,9 +71,9 @@
 @endsection
 @section('scripts')
 <script>
-  function getForm(id){
-  fetch({{ Route::to('form/'+id) }}).then('res ')
-
+  async function getForm(id) {
+  let res = await fetch('{{ route('laporan.form')}}'+'/'+id).then(res => res.json())
+  $('#formLipa').html(res);
 }
 </script>
 @endsection
